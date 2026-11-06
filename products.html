@@ -1,0 +1,50 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Products | MANASA</title><style>
+:root{--pink:#e91e63;--deep:#ad1457;--pale:#fff0f5;--ink:#29232a;--muted:#756b73;--line:#f2dce5;--white:#fff}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#fff8fb;color:var(--ink)}
+header{background:#fff;position:sticky;top:0;z-index:5;border-bottom:1px solid var(--line);box-shadow:0 3px 15px #4a18300c}
+.nav{max-width:1120px;margin:auto;padding:15px 22px;display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap}
+.brand{font-size:25px;font-weight:800;color:var(--deep);text-decoration:none;letter-spacing:1px}
+nav{display:flex;gap:17px;flex-wrap:wrap}nav a{color:var(--ink);text-decoration:none;font-weight:600;font-size:14px}nav a:hover{color:var(--pink)}
+main{max-width:1120px;margin:35px auto;padding:0 22px;min-height:65vh}
+.hero{background:linear-gradient(120deg,#fce4ec,#fff);border-radius:22px;padding:55px 35px;display:grid;grid-template-columns:1.3fr 1fr;gap:25px;align-items:center}
+.hero h1{font-size:clamp(32px,5vw,54px);margin:0 0 15px;color:var(--deep)}.hero p{line-height:1.7;color:var(--muted);max-width:540px}
+.hero-art{font-size:110px;text-align:center}.eyebrow{color:var(--pink);font-weight:800;text-transform:uppercase;letter-spacing:2px;font-size:12px}
+.btn{display:inline-block;border:0;border-radius:10px;padding:12px 18px;background:var(--pink);color:white;font-weight:700;text-decoration:none;cursor:pointer}
+.btn:hover{background:var(--deep)}.btn.light{background:white;color:var(--deep);border:1px solid var(--line)}
+h1,h2,h3{color:var(--deep)}.section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:28px 0 15px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:18px}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:17px;box-shadow:0 6px 20px #6d21400a}
+.product-art{height:135px;border-radius:12px;background:var(--pale);display:grid;place-items:center;font-size:58px;margin-bottom:13px}
+.price{font-weight:800;color:var(--deep);font-size:18px}.muted{color:var(--muted)}.form-card{max-width:520px;margin:25px auto;background:#fff;padding:28px;border:1px solid var(--line);border-radius:18px;box-shadow:0 8px 30px #6d21400d}
+label{display:block;font-weight:700;font-size:14px;margin:14px 0 6px}input,select{width:100%;padding:12px;border:1px solid #e5cbd6;border-radius:9px;font:inherit;background:#fff}
+input:focus,select:focus{outline:2px solid #f8bbd0;border-color:var(--pink)}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden}th,td{text-align:left;padding:13px;border-bottom:1px solid var(--line);font-size:14px}th{background:var(--pale);color:var(--deep)}
+.notice{padding:12px 14px;border-radius:10px;background:#fce4ec;color:var(--deep);margin:12px 0}.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.right{margin-left:auto}
+footer{text-align:center;padding:25px;color:var(--muted);border-top:1px solid var(--line);background:#fff;margin-top:35px}
+@media(max-width:700px){.hero{grid-template-columns:1fr;padding:35px 22px}.hero-art{font-size:75px}nav{gap:10px}}
+</style></head><body><script>
+const STORE={products:'manasa_products',cart:'manasa_cart',users:'manasa_users',user:'manasa_current_user',orders:'manasa_orders'};
+const seedProducts=[
+{id:1,name:'Classic Handbag',category:'Fashion',price:1299,stock:12,emoji:'👜'},
+{id:2,name:'Wireless Headphones',category:'Electronics',price:1899,stock:8,emoji:'🎧'},
+{id:3,name:'Smart Watch',category:'Electronics',price:2499,stock:10,emoji:'⌚'},
+{id:4,name:'Floral Dress',category:'Fashion',price:1599,stock:15,emoji:'👗'},
+{id:5,name:'Skincare Set',category:'Beauty',price:899,stock:20,emoji:'🧴'},
+{id:6,name:'Running Shoes',category:'Footwear',price:2199,stock:9,emoji:'👟'}
+];
+function getData(key,fallback){try{const v=localStorage.getItem(key);return v?JSON.parse(v):fallback}catch(e){return fallback}}
+function setData(key,val){localStorage.setItem(key,JSON.stringify(val))}
+function products(){let p=getData(STORE.products,null);if(!p){p=seedProducts;setData(STORE.products,p)}return p}
+function cart(){return getData(STORE.cart,[])}
+function currentUser(){return getData(STORE.user,null)}
+function money(n){return '₹'+Number(n).toLocaleString('en-IN')}
+function header(){return `<header><div class="nav"><a class="brand" href="index.html">MANASA</a><nav><a href="index.html">Home</a><a href="products.html">Products</a><a href="cart.html">Cart (${cart().reduce((s,x)=>s+x.qty,0)})</a><a href="orders.html">My Orders</a><a href="admin.html">Admin</a><a href="login.html">Login</a></nav></div></header>`}
+function footer(){return `<footer>© 2026 MANASA Shopping · Simple, smart online shopping</footer>`}
+function layout(content){document.body.innerHTML=header()+`<main>${content}</main>`+footer()}
+function addToCart(id){let c=cart(),p=products().find(x=>x.id===id);if(!p)return;let found=c.find(x=>x.id===id);if(found)found.qty=Math.min(found.qty+1,p.stock);else c.push({id,qty:1});setData(STORE.cart,c);alert('Product added to cart');location.reload()}
+function requireLogin(){if(!currentUser()){alert('Please login first');location.href='login.html';return false}return true}
+
+layout(`<div class="section-head"><div><div class="eyebrow">Our collection</div><h1>Shop products</h1></div><input id="search" style="max-width:260px" placeholder="Search products..."></div><div class="row"><label>Category</label><select id="category" style="max-width:220px"><option value="">All categories</option>${[...new Set(products().map(p=>p.category))].map(c=>`<option>${c}</option>`).join('')}</select></div><div id="list" class="grid" style="margin-top:20px"></div>`);
+function render(){let q=document.getElementById('search').value.toLowerCase(),cat=document.getElementById('category').value;let arr=products().filter(p=>p.name.toLowerCase().includes(q)&&(!cat||p.category===cat));document.getElementById('list').innerHTML=arr.length?arr.map(p=>`<article class="card"><div class="product-art">${p.emoji||'🛍️'}</div><div class="muted">${p.category} · Stock: ${p.stock}</div><h3>${p.name}</h3><p class="price">${money(p.price)}</p><button class="btn" ${p.stock<1?'disabled':''} onclick="addToCart(${p.id})">${p.stock<1?'Out of stock':'Add to cart'}</button></article>`).join(''):'<p>No products found.</p>'}
+document.getElementById('search').addEventListener('input',render);document.getElementById('category').addEventListener('change',render);render();
+</script></body></html>
